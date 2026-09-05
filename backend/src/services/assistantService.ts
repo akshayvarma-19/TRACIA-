@@ -161,9 +161,9 @@ ${contextString ? `Below is the authorized context of records belonging to this 
 Remember, keep your answers short and highly structured. Do not output code blocks unless requested.`;
 
     // 4. Invoke LLM API (Groq or xAI fallback)
-    const isGroq = apiKey.startsWith('gsk_');
+    const isGroq = apiKey.startsWith('gsk_') || apiKey.length > 20;
     const apiUrl = isGroq ? 'https://api.groq.com/openai/v1/chat/completions' : 'https://api.x.ai/v1/chat/completions';
-    const apiModel = isGroq ? 'openai/gpt-oss-120b' : 'grok-beta';
+    const apiModel = isGroq ? 'llama-3.3-70b-versatile' : 'grok-beta';
 
     const response = await fetch(apiUrl, {
       method: 'POST',

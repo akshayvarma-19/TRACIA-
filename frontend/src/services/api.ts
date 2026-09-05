@@ -1,4 +1,6 @@
-export const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000/api';
+const rawUrl = (import.meta.env.VITE_BACKEND_URL as string) || 'http://localhost:5000/api';
+const cleanUrl = rawUrl.trim().replace(/\/+$/, '');
+export const API_BASE_URL = cleanUrl.endsWith('/api') ? cleanUrl : `${cleanUrl}/api`;
 
 export class ApiError extends Error {
   statusCode: number;
