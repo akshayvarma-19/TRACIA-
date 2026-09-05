@@ -28,32 +28,39 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (e.g. mobile apps, curl, Postman, health checks)
+    // 1. Allow requests with no origin (e.g. mobile apps, curl, Postman, server-to-server, health checks)
     if (!origin) {
       return callback(null, true);
     }
 
-    // If wildcard '*' is specified, allow all origins
-    if (allowedOrigins.includes('*')) {
+    // 2. If ALLOWED_ORIGINS is unconfigured or contains '*', allow all origins
+    if (allowedOrigins.length === 0 || allowedOrigins.includes('*')) {
       return callback(null, true);
     }
 
-    // Allow explicitly configured production origins
+    // 3. Allow exact matches in ALLOWED_ORIGINS
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
 
-    // Allow localhost development origins if ALLOWED_ORIGINS is empty or in dev mode
-    if (allowedOrigins.length === 0 || process.env.NODE_ENV !== 'production') {
-      if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
-        return callback(null, true);
-      }
+    // 4. Allow any Vercel deployment domain (*.vercel.app) if vercel.app is configured in ALLOWED_ORIGINS
+    const isVercelOrigin = origin.endsWith('.vercel.app');
+    const permitsVercel = allowedOrigins.some((o) => o.includes('vercel.app'));
+    if (isVercelOrigin && permitsVercel) {
+      return callback(null, true);
     }
 
-    // Reject unconfigured origins in production
-    return callback(new Error(`CORS policy: Origin '${origin}' is not allowed.`));
+    // 5. Allow localhost development origins by default
+    const isLocalhost = origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:');
+    if (isLocalhost) {
+      return callback(null, true);
+    }
+
+    // 6. Deny unconfigured origins gracefully without throwing Express 500 error
+    console.warn(`[CORS] Blocked request from origin: ${origin}`);
+    return callback(null, false);
   },
-  credentials: true,
+  credentials: false
 }));
 app.use(express.json());
 

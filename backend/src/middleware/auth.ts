@@ -22,10 +22,11 @@ export async function authenticateToken(req: Request, res: Response, next: NextF
 
     let userObj: any = null;
 
-    if (token && token.startsWith('mock-token-')) {
+    if (token && (token.startsWith('mock-token-') || token.startsWith('token-'))) {
+      const isMock = token.startsWith('mock-token-');
       const parts = token.split('-');
-      const role = parts[2];
-      const id = parts.slice(3).join('-');
+      const role = isMock ? parts[2] : parts[1];
+      const id = isMock ? parts.slice(3).join('-') : parts.slice(2).join('-');
 
       const { data: dbUser } = await supabaseAdmin
         .from('users')
