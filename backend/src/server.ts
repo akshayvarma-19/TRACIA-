@@ -23,16 +23,35 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS
-  ? process.env.ALLOWED_ORIGINS.split(',').map((o) => o.trim())
-  : ['*'];
+  ? process.env.ALLOWED_ORIGINS.split(',').map((o) => o.trim()).filter(Boolean)
+  : [];
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(null, true);
+    // Allow requests with no origin (e.g. mobile apps, curl, Postman, health checks)
+    if (!origin) {
+      return callback(null, true);
     }
+
+    // If wildcard '*' is specified, allow all origins
+    if (allowedOrigins.includes('*')) {
+      return callback(null, true);
+    }
+
+    // Allow explicitly configured production origins
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    // Allow localhost development origins if ALLOWED_ORIGINS is empty or in dev mode
+    if (allowedOrigins.length === 0 || process.env.NODE_ENV !== 'production') {
+      if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+        return callback(null, true);
+      }
+    }
+
+    // Reject unconfigured origins in production
+    return callback(new Error(`CORS policy: Origin '${origin}' is not allowed.`));
   },
   credentials: true,
 }));

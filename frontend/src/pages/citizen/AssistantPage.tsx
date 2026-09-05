@@ -79,7 +79,7 @@ export const CitizenAssistantPage: React.FC = () => {
 
       <ErrorAlert
         title="AI Service Notice"
-        message="Structured LLM query extraction (Gemini engine) will connect via the Express backend API."
+        message="AI assistance is powered securely through the Express backend."
       />
 
       {/* Chat Container */}

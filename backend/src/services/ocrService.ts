@@ -174,7 +174,7 @@ Parent Document: DOC-2015-1102`;
   },
 
   /**
-   * Structure the raw text using Groq's llama-3.3-70b-versatile.
+   * Structure the raw text using Groq LLM model.
    */
   async extractFieldsWithGroq(rawText: string): Promise<any> {
     const apiKey = process.env.GROQ_API_KEY;
@@ -182,6 +182,8 @@ Parent Document: DOC-2015-1102`;
       console.warn('GROQ_API_KEY is not configured. Falling back to regex parsing.');
       return null;
     }
+
+    const groqModel = process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
 
     try {
       const prompt = `You are a professional land records data extractor. Your task is to extract official land registry fields from the provided document text.
@@ -224,7 +226,7 @@ JSON Schema:
           messages: [
             { role: 'user', content: prompt }
           ],
-          model: 'llama-3.3-70b-versatile',
+          model: groqModel,
           stream: false,
           temperature: 0.1
         })
