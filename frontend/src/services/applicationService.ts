@@ -50,8 +50,7 @@ export const applicationService = {
       } catch (e) {}
     }
     const base = role === 'officer' ? '/officer/applications' : '/citizen/applications';
-    // Citizen detail can just map to listing own since detail endpoint is same
-    return request<ApiResponse<ApplicationRecord>>(`/officer/applications/${id}`);
+    return request<ApiResponse<ApplicationRecord>>(`${base}/${id}`);
   },
 
   /**

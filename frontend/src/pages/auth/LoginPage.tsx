@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Building2, Shield, User, Lock, AlertCircle, Loader2, Mail, Phone, 
+  Shield, User, Lock, AlertCircle, Loader2, Mail, Phone, 
   UserCheck, CheckCircle2, Eye, EyeOff, Fingerprint, ShieldCheck, 
   Users, BarChart3 
 } from 'lucide-react';

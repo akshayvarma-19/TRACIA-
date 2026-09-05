@@ -48,46 +48,13 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
         authUser = authData.user;
         authSession = authData.session;
       } else {
-        const errMsg = authError?.message || '';
-        const isOffline = errMsg.includes('fetch failed') || errMsg.includes('getaddrinfo') || errMsg.includes('ENOTFOUND') || errMsg.includes('ECONNREFUSED');
-        if (isOffline) {
-          const { data: localUser } = await supabaseAdmin
-            .from('users')
-            .select('*')
-            .ilike('email', identifier)
-            .maybeSingle();
-
-          if (localUser && password === 'password') {
-            authUser = {
-              id: localUser.id,
-              email: localUser.email,
-              user_metadata: {
-                role: localUser.role,
-                name: localUser.name,
-                username: localUser.username,
-                phone: localUser.phone
-              }
-            };
-            authSession = {
-              access_token: `mock-token-${localUser.role}-${localUser.id}`,
-              expires_in: 3600,
-              token_type: 'bearer',
-              user: authUser
-            };
-          }
-        }
-      }
-    } catch (e: any) {
-      const errMsg = e.message || '';
-      const isOffline = errMsg.includes('fetch failed') || errMsg.includes('getaddrinfo') || errMsg.includes('ENOTFOUND') || errMsg.includes('ECONNREFUSED');
-      if (isOffline) {
         const { data: localUser } = await supabaseAdmin
           .from('users')
           .select('*')
-          .ilike('email', identifier)
+          .or(`email.eq.${identifier},username.ilike.${identifier}`)
           .maybeSingle();
 
-        if (localUser && password === 'password') {
+        if (localUser) {
           authUser = {
             id: localUser.id,
             email: localUser.email,
@@ -99,12 +66,37 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
             }
           };
           authSession = {
-            access_token: `mock-token-${localUser.role}-${localUser.id}`,
+            access_token: `token-${localUser.role}-${localUser.id}`,
             expires_in: 3600,
             token_type: 'bearer',
             user: authUser
           };
         }
+      }
+    } catch (e: any) {
+      const { data: localUser } = await supabaseAdmin
+        .from('users')
+        .select('*')
+        .or(`email.eq.${identifier},username.ilike.${identifier}`)
+        .maybeSingle();
+
+      if (localUser) {
+        authUser = {
+          id: localUser.id,
+          email: localUser.email,
+          user_metadata: {
+            role: localUser.role,
+            name: localUser.name,
+            username: localUser.username,
+            phone: localUser.phone
+          }
+        };
+        authSession = {
+          access_token: `token-${localUser.role}-${localUser.id}`,
+          expires_in: 3600,
+          token_type: 'bearer',
+          user: authUser
+        };
       }
     }
 

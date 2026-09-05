@@ -33,7 +33,24 @@ export const OfficerLayout: React.FC = () => {
       {/* Global Header */}
       <Header userRole="officer" />
 
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+        {/* Mobile Nav Top Bar */}
+        <div className="md:hidden bg-[#034E4E] text-white px-4 py-2 flex items-center justify-between border-b border-[#023B3B] shrink-0">
+          <div className="flex items-center space-x-2.5">
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="p-1.5 rounded-lg text-white hover:bg-[#023B3B] focus:outline-none"
+              aria-label="Toggle menu"
+            >
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+            <span className="text-xs font-bold text-white/90 uppercase tracking-wider">Officer Portal Navigation</span>
+          </div>
+          <span className="text-[10px] font-semibold bg-[#023B3B] px-2 py-0.5 rounded text-teal-200">
+            Officer Portal
+          </span>
+        </div>
+
         {/* Desktop Sidebar (White bg with #DDE5E3 border) */}
         <aside className="hidden md:flex flex-col w-64 bg-white border-r border-[#DDE5E3] text-[#172121] shrink-0 justify-between">
           <div>
@@ -82,18 +99,6 @@ export const OfficerLayout: React.FC = () => {
             </div>
           </div>
         </aside>
-
-        {/* Mobile Nav Top Bar */}
-        <div className="md:hidden bg-[#034E4E] text-white px-4 py-2.5 flex items-center justify-between border-b border-[#023B3B]">
-          <span className="text-xs font-bold text-white/90 uppercase tracking-wider">Officer Portal</span>
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="p-1 rounded text-white hover:bg-[#023B3B]"
-            aria-label="Toggle menu"
-          >
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-        </div>
 
         {/* Mobile Menu Backdrop */}
         {mobileOpen && (

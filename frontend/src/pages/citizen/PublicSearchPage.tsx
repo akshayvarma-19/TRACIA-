@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, ShieldCheck, AlertCircle, Loader2, Globe } from 'lucide-react';
+import { Search, ShieldCheck, AlertCircle, Loader2 } from 'lucide-react';
 import { EmptyState } from '../../components/common/EmptyState';
 import { Land3DMap } from '../../components/common/Land3DMap';
 import { landService } from '../../services/landService';

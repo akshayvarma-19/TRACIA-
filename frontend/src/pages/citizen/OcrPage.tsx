@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Upload, FileCheck, AlertTriangle, FileText, CheckCircle2, XCircle, HelpCircle, Loader2 } from 'lucide-react';
+import { Upload, FileCheck, AlertTriangle, FileText, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ErrorAlert } from '../../components/common/ErrorAlert';
 import { Badge } from '../../components/common/Badge';
